@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🍎 AI助力学习 | 小学生年级乐园</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f9f0c1 0%, #ffecd6 100%);
+            font-family: 'Comic Neue', 'Comic Neue', 'Chalkboard SE', 'Comic Sans MS', 'Segoe UI Emoji', 'Apple Color Emoji', cursive, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 1.5rem 3rem;
+            position: relative;
+            color: #2d3e2b;
+        }
+
+        /* 可爱的漂浮小元素背景 */
+        body::before {
+            content: "⭐✨📚✏️🎨⚽";
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            font-size: 40px;
+            opacity: 0.08;
+            pointer-events: none;
+            white-space: nowrap;
+            overflow: hidden;
+            letter-spacing: 30px;
+            z-index: 0;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 头部可爱风格 */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 245, 0.7);
+            backdrop-filter: blur(3px);
+            border-radius: 80px;
+            padding: 1.8rem 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            background: linear-gradient(135deg, #F9A26C, #FF6B6B, #4D9DE0);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 4px 4px 12px rgba(0,0,0,0.05);
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .subhead {
+            font-size: 1.3rem;
+            background-color: #FFF7E8;
+            display: inline-block;
+            padding: 0.4rem 1.8rem;
+            border-radius: 60px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            color: #E86F2C;
+            font-weight: bold;
+        }
+
+        .subhead span {
+            display: inline-block;
+            animation: wave 1.5s infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(12deg); }
+            75% { transform: rotate(-8deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* 年级卡片网格 */
+        .grade-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            gap: 2rem 1.8rem;
+            margin: 2.5rem 0 2rem;
+        }
+
+        /* 卡片样式 — 每个卡片就是可点击的a标签 */
+        .grade-card {
+            display: block;
+            background: white;
+            border-radius: 48px 32px 48px 32px;
+            padding: 1.6rem 0.8rem;
+            text-align: center;
+            text-decoration: none;
+            color: #2c3e2f;
+            transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1), 
+                        box-shadow 0.25s ease,
+                        background 0.2s;
+            box-shadow: 0 12px 18px -8px rgba(0, 0, 0, 0.12);
+            border: 2px solid rgba(255,245,200,0.8);
+            backdrop-filter: blur(2px);
+            cursor: pointer;
+            will-change: transform;
+        }
+
+        /* 鼠标移动到板块上 — 变大效果 */
+        .grade-card:hover {
+            transform: scale(1.08);
+            box-shadow: 0 25px 30px -12px rgba(0, 0, 0, 0.25);
+            z-index: 10;
+            position: relative;
+            border-color: #ffcd94;
+        }
+
+        /* 给每个年级不同的柔和背景色 */
+        .grade-card[data-grade="1"] { background: #FFE8D9; }
+        .grade-card[data-grade="2"] { background: #FFE2C2; }
+        .grade-card[data-grade="3"] { background: #D9F0E1; }
+        .grade-card[data-grade="4"] { background: #C5E9FA; }
+        .grade-card[data-grade="5"] { background: #E0D3FF; }
+        .grade-card[data-grade="6"] { background: #FFD9E6; }
+        .grade-card[data-grade="extra"] { background: #FCE6B4; }
+
+        /* 卡片内图标 */
+        .grade-emoji {
+            font-size: 4rem;
+            display: inline-block;
+            margin-bottom: 0.6rem;
+            transition: transform 0.2s ease;
+        }
+
+        .grade-card:hover .grade-emoji {
+            transform: scale(1.08) rotate(3deg);
+        }
+
+        .grade-title {
+            font-size: 1.9rem;
+            font-weight: 800;
+            margin: 0.5rem 0 0.2rem;
+            letter-spacing: 1px;
+            background: linear-gradient(145deg, #4a3b1c, #6b4c2c);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: none;
+        }
+
+        .grade-desc {
+            font-size: 0.9rem;
+            color: #5a4a2e;
+            background: rgba(255,255,235,0.7);
+            border-radius: 60px;
+            padding: 0.3rem 0.6rem;
+            display: inline-block;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* 非学科特殊小标志 */
+        .badge-fun {
+            background: #FFB347;
+            color: white;
+            font-size: 0.7rem;
+            border-radius: 30px;
+            padding: 0.2rem 0.6rem;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* 页脚可爱说明 */
+        .footer-note {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            background: rgba(255,245,215,0.7);
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #b97f44;
+            backdrop-filter: blur(2px);
+        }
+
+        .footer-note a {
+            color: #E86F2C;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 2px dotted #ffb882;
+        }
+
+        /* 响应式：移动端卡片间距缩小，字体略小但依然清晰 */
+        @media (max-width: 680px) {
+            body {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 2.3rem;
+            }
+            .subhead {
+                font-size: 1rem;
+            }
+            .grade-grid {
+                gap: 1.2rem;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            .grade-card {
+                padding: 1rem 0.5rem;
+            }
+            .grade-emoji {
+                font-size: 3rem;
+            }
+            .grade-title {
+                font-size: 1.5rem;
+            }
+            .grade-desc {
+                font-size: 0.75rem;
+            }
+            .grade-card:hover {
+                transform: scale(1.05);
+            }
+        }
+
+        /* 小动物点缀 */
+        .deco-leaf {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 42px;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+            transform: rotate(-8deg);
+        }
+
+        /* 焦点可见性 */
+        .grade-card:focus-visible {
+            outline: 4px solid #ffa559;
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="hero">
+        <h1>📚 乐学星球 🪐</h1>
+        <div class="subhead">
+            <span>🌈</span> 小手点一点，知识变简单！ <span>✨</span>
+        </div>
+        <p style="margin-top: 12px; font-size: 1rem; color: #C97E3A;">⭐ 把鼠标放在板块上，点击进入专属年级 ⭐</p>
+    </div>
+
+    <!-- 七个板块网格：一年级~六年级 + 非学科 -->
+    <div class="grade-grid">
+        <!-- 一年级 -->
+        <a href="./grade1/index.html" class="grade-card" data-grade="1">
+            <div class="grade-emoji">🍎🐣</div>
+            <div class="grade-title">一年级</div>
+            <div class="grade-desc">拼音识字·加减法</div>
+        </a>
+        <!-- 二年级 -->
+        <a href="./grade2/index.html" class="grade-card" data-grade="2">
+            <div class="grade-emoji">📖✏️</div>
+            <div class="grade-title">二年级</div>
+            <div class="grade-desc">乘法口诀·写话乐园</div>
+        </a>
+        <!-- 三年级 -->
+        <a href="./grade3/index.html" class="grade-card" data-grade="3">
+            <div class="grade-emoji">🔍🌱</div>
+            <div class="grade-title">三年级</div>
+            <div class="grade-desc">英语入门·阅读理解</div>
+        </a>
+        <!-- 四年级 -->
+        <a href="./grade4/index.html" class="grade-card" data-grade="4">
+            <div class="grade-emoji">🧮⚡</div>
+            <div class="grade-title">四年级</div>
+            <div class="grade-desc">混合运算·作文强化</div>
+        </a>
+        <!-- 五年级 -->
+        <a href="./grade5/index.html" class="grade-card" data-grade="5">
+            <div class="grade-emoji">🌍🚀</div>
+            <div class="grade-title">五年级</div>
+            <div class="grade-desc">方程·句型转换</div>
+        </a>
+        <!-- 六年级 -->
+        <a href="./grade6/index.html" class="grade-card" data-grade="6">
+            <div class="grade-emoji">📚🏆</div>
+            <div class="grade-title">六年级</div>
+            <div class="grade-desc">文言文·百分数·时态强化</div>
+        </a>
+        <!-- 非学科板块 — 艺术/体育/编程/创客 -->
+        <a href="./non-academic/index.html" class="grade-card" data-grade="extra">
+            <div class="grade-emoji">🎨⚽💻</div>
+            <div class="grade-title">
+                非学科
+            </div>
+            <div class="grade-desc">科学·拓展·AI·其他</div>
+        </a>
+    </div>
+
+    <div class="footer-note">
+        🧸 每个年级都有专属知识城堡！点击卡片就会飞进去～  <br>
+        🌟 一起来探索知识的奥秘吧！  <span style="font-size:1.2rem;">🎈</span>
+    </div>
+</div>
+
+<!-- 可爱的装饰小叶子（纯装饰） -->
+<div class="deco-leaf">🍂🍃🐞</div>
+
+<!-- 无需额外js，hover纯css实现板块变大，点击跳转已由超链接完成。
+     注：href指向对应的年级文件夹（例如 ./grade1/index.html），
+     您在实际部署时，只需要在仓库里创建 grade1, grade2 ... grade6, non-academic 文件夹，
+     并在每个文件夹内放置对应的二级页面 index.html 即可构成多级网站。
+     鼠标悬浮时卡片会明显变大，完全符合要求。 
+-->
+</body>
+</html>
